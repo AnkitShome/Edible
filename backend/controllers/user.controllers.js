@@ -287,4 +287,63 @@ const refreshAccessToken = async (req, res) => {
 };
 
 
-export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken }
+const changePassword = async (req, res) => {
+
+   try {
+      const { oldPassword, newPassword, confirmPassword } = req.body
+
+      if (!(oldPassword || newPassword || confirmPassword)) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Enter all fields"
+            })
+      }
+
+      const user = await User.findById(req.user._id)
+
+      if (!(await bcrypt.compare(oldPassword, user.password))) {
+         return res.status(401)
+            .json({
+               success: false,
+               msg: "Password entered is incorrect"
+            })
+      }
+
+      if (oldPassword === newPassword) {
+         return res.status(401)
+            .json({
+               success: false,
+               msg: "New password should be different"
+            })
+      }
+
+      if (newPassword !== confirmPassword) {
+         return res.status(401)
+            .json({
+               success: false,
+               msg: "Confirm your password"
+            })
+      }
+
+      user.password = newPassword
+      await user.save({ validateBeforeSave: false })
+
+      return res.status(200)
+         .json({
+            success: true,
+            msg: "Password  changed"
+         })
+
+   } catch (error) {
+      console.log(error)
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "An error occured while changing password"
+         })
+   }
+}
+
+
+export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken, changePassword }
