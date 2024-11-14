@@ -107,9 +107,12 @@ const registerUser = async (req, res) => {
 }
 
 
+
 const loginUser = async (req, res) => {
    try {
       const { email, password } = req.body
+
+      // console.log(req.protocol) //debug
 
       if (!email || !password) {
          return res.status(401).json({
@@ -145,7 +148,8 @@ const loginUser = async (req, res) => {
 
       const options = {
          httpOnly: true,
-         secure: true
+         secure: false
+         // secure: true,
          // secure: process.env.NODE_ENV === "production",
       }
 
@@ -170,6 +174,7 @@ const loginUser = async (req, res) => {
 }
 
 
+
 const logoutUser = async (req, res) => {
    try {
       await User.findByIdAndUpdate(
@@ -184,7 +189,9 @@ const logoutUser = async (req, res) => {
 
       const options = {
          httpOnly: true,
-         secure: true
+         secure: false,
+         // secure: true,
+         // secure: process.env.NODE_ENV === "production",
       }
 
 
@@ -206,6 +213,7 @@ const logoutUser = async (req, res) => {
          })
    }
 }
+
 
 
 export { registerUser, loginUser, sendOtp, logoutUser }
