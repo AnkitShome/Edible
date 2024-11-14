@@ -2,6 +2,27 @@ import bcrypt from "bcrypt"
 import otpGenerator from "otp-generator"
 import { User } from "../models/user.models.js";
 import { OTP } from "../models/OTP.models.js";
+import jwt from "jsonwebtoken"
+
+const generateRefreshAndAccessToken = async (userId) => {
+   try {
+      const user = await User.findById(userId)
+
+      const accessToken = user.createAccessToken();
+      const refreshToken = user.createRefreshToken();
+
+      user.refreshToken = refreshToken
+
+      await user.save({ validateBeforeSave: false })
+
+      return { accessToken, refreshToken }
+   } catch (error) {
+      return res.status(500).json({
+         success: false,
+         msg: "Something went wrong while generating referesh and access token"
+      })
+   }
+}
 
 const sendOtp = async (req, res) => {
    try {
@@ -214,6 +235,56 @@ const logoutUser = async (req, res) => {
    }
 }
 
+const refreshAccessToken = async (req, res) => {
+   try {
+      const incomingRefreshToken = req.cookies?.refreshToken || req.header("Authorization")?.replace("Bearer ", "");
+      // console.log("Incoming Refresh Token:", incomingRefreshToken, "\n");
+
+      if (!incomingRefreshToken) {
+         return res.status(401).json({
+            success: false,
+            msg: "Unauthorized request",
+         });
+      }
+
+      const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+      const user = await User.findById(decodedToken?._id);
+
+      if (!user) {
+         return res.status(401).json({
+            success: false,
+            msg: "Refresh token is expired or invalid",
+         });
+      }
+
+      const options = {
+         httpOnly: true,
+         secure: false
+         // secure: process.env.NODE_ENV === "production",
+      };
 
 
-export { registerUser, loginUser, sendOtp, logoutUser }
+      const { accessToken, refreshToken: newRefreshToken } = await generateRefreshAndAccessToken(user._id);
+      // console.log("New Refresh Token:", newRefreshToken, "\n");
+
+      res.status(200)
+         .cookie("accessToken", accessToken, options)
+         .cookie("refreshToken", newRefreshToken, options)
+         .json({
+            success: true,
+            accessToken,
+            refreshToken: newRefreshToken,
+            msg: "Access token and refresh token renewed",
+         });
+   } catch (error) {
+      console.log("Error in refreshAccessToken:", error);
+      return res.status(500).json({
+         success: false,
+         msg: "Tokens cannot be generated. Please try again later",
+      });
+   }
+};
+
+
+export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken }
