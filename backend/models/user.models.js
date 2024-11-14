@@ -88,6 +88,9 @@ userSchema.methods.createAccessToken = function () {
          email: this.email
       },
       process.env.ACCESS_TOKEN_SECRET,
+      {
+         // expiresIn: '60m'
+      }
    )
 }
 
@@ -96,7 +99,10 @@ userSchema.methods.createRefreshToken = function () {
       {
          _id: this._id
       },
-      process.env.REFRESH_TOKEN_SECRET
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+         // expiresIn: '7d'
+      }
    )
 }
 

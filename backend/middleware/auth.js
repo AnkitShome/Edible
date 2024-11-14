@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken"
 import { User } from "../models/user.models.js"
 
-const auth = async (req, res) => {
+const verifyJWT = async (req, res) => {
    try {
       //get the token
       //decode the token
       //check for user in database
       //if present req.user
 
-      const token = req.cookie?.accessToken || req.header("Authorization").replace("Bearer ", "")
+      const token = req.cookies?.accessToken || req.header("Authorization").replace("Bearer ", "")
 
       if (!token) {
          return res.status(400).json({
@@ -19,7 +19,7 @@ const auth = async (req, res) => {
 
       const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
 
-      const user = User.findbyId(decodedToken._id)
+      const user = await User.findbById(decodedToken._id).select("-password -refreeshToken")
 
       if (!user) {
          return res.status(400).json({
@@ -31,7 +31,8 @@ const auth = async (req, res) => {
       req.user = user
 
       return res.status(201).json({
-         success: ture
+         success: true,
+         msg: "Token verified successfully"
       })
 
    } catch (error) {
@@ -41,3 +42,5 @@ const auth = async (req, res) => {
       })
    }
 }
+
+export { verifyJWT }

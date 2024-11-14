@@ -107,7 +107,7 @@ const registerUser = async (req, res) => {
 }
 
 
-const login = async (req, res) => {
+const loginUser = async (req, res) => {
    try {
       const { email, password } = req.body
 
@@ -145,8 +145,8 @@ const login = async (req, res) => {
 
       const options = {
          httpOnly: true,
-         // secure: true
-         secure: process.env.NODE_ENV === "production",
+         secure: true
+         // secure: process.env.NODE_ENV === "production",
       }
 
       return res
@@ -170,6 +170,42 @@ const login = async (req, res) => {
 }
 
 
+const logoutUser = async (req, res) => {
+   try {
+      await User.findByIdAndUpdate(
+         req.user._id,
+         {
+            $set: {
+               refreshToken: undefined
+            }
+         },
+         { new: true }
+      )
+
+      const options = {
+         httpOnly: true,
+         secure: true
+      }
 
 
-export { registerUser, login, sendOtp }
+
+      return res.status(200)
+         .clearCookie("accessToken", options)
+         .clearCookie("refreshToken", options)
+         .json({
+            success: true,
+            msg: "User logged out"
+         })
+
+   }
+   catch (error) {
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "User cannot be logged out. Please try again later"
+         })
+   }
+}
+
+
+export { registerUser, loginUser, sendOtp, logoutUser }
