@@ -345,5 +345,52 @@ const changePassword = async (req, res) => {
    }
 }
 
+const updateUser = async (req, res) => {
+   try {
+      const { password, phoneNumber, username, firstName, lastName, address } = req.body
 
-export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken, changePassword }
+      if (!password) {
+         return res.status(401)
+            .json({
+               success: false,
+               msg: "Enter password"
+            })
+      }
+
+      const user = await User.findById(req.user._id)
+
+      if (!(await bcrypt.compare(password, user.password) || !user)) {
+         return res.status(401)
+            .json({
+               success: false,
+               msg: "Enter correct password"
+            })
+      }
+
+      if (phoneNumber) user.phoneNumber = phoneNumber
+      if (username) user.username = username
+      if (firstName) user.firstName = firstName
+      if (lastName) user.lastName = lastName
+      if (address) user.address = address
+
+      await user.save({ validateBeforeSave: false })
+
+      return res.status(200)
+         .json({
+            success: true,
+            msg: "User details updated"
+         })
+
+   } catch (error) {
+      console.log(error)
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "An error occured while updating user details"
+         })
+
+   }
+}
+
+
+export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken, changePassword, updateUser }
