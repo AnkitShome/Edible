@@ -63,6 +63,8 @@ const sendOtp = async (req, res) => {
 
 }
 
+
+
 const registerUser = async (req, res) => {
    try {
       const { firstName, lastName, username, email, password, phoneNumber, otp } = req.body
@@ -152,6 +154,9 @@ const loginUser = async (req, res) => {
       }
 
       if (!(await bcrypt.compare(password, user.password))) {
+         console.log(password)
+         const has =
+            console.log(user.password)
          return res.status(400).json({
             success: false,
             message: "Invalid password entered"

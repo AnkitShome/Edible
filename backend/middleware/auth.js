@@ -37,13 +37,15 @@ const verifyJWT = async (req, res, next) => {
 
 const isAdmin = async (req, res, next) => {
    try {
-      if (req.user.roles !== "admin") {
-         return res.status(401)
+      if (req.user.role !== "admin") {
+         return res.status(403)
             .json({
                success: false,
                message: "Admin access only"
             })
       }
+
+      next();
    } catch (error) {
       console.log(error)
       res.status(500)
