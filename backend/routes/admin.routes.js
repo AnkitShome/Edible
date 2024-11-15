@@ -8,9 +8,9 @@ const router = Router()
 router.route("/sendOtp").post(sendOtp)
 router.route("/signup").post(registerAdmin)
 router.route("/login").post(loginUser)
-// router.route("/logout").post(verifyJWT, isAdmin, logoutUser)
-// router.route("/change-password").post(verifyJWT, isAdmin, changePassword)
-// router.route("/refresh-token").post(refreshAccessToken)
-// router.route("/update").post(verifyJWT, isAdmin, updateUser)
+router.route("/logout").post(verifyJWT, isAdmin, logoutUser)
+router.route("/change-password").post(verifyJWT, isAdmin, changePassword)
+router.route("/refresh-token").post(refreshAccessToken)
+router.route("/update").post(verifyJWT, isAdmin, updateUser)
 
 export default router

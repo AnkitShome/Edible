@@ -19,6 +19,10 @@ const restaurantSchema = new mongoose.Schema({
          lon: { type: Number }
       }
    },
+   image: {
+      type: String,
+      required: true
+   },
    rating: {
       type: Number,
       default: 0
