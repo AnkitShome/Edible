@@ -393,4 +393,5 @@ const updateUser = async (req, res) => {
 }
 
 
+
 export { registerUser, loginUser, sendOtp, logoutUser, refreshAccessToken, changePassword, updateUser }

@@ -16,8 +16,10 @@ app.use(cookieParser())
 connectDB()
 
 import userRouter from "./routes/user.routes.js"
+import restaurantRouter from './routes/restaurant.routes.js'
 
 app.use("/api/register", userRouter)
+app.use("/api/rest", restaurantRouter)
 
 app.get('/', (req, res) => {
    res.send("API Working")
