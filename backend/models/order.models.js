@@ -14,7 +14,8 @@ const orderItemSchema = Schema({
 const orderSchema = Schema({
    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+      required: true
    },
    Restaurant: {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,6 +42,11 @@ const orderSchema = Schema({
    },
    deliveryAddress: {
       type: String,
+      required: true
+   },
+   orderedAt: {
+      type: Date,
+      default: date.now,
       required: true
    }
 }, { Timestamps: true })

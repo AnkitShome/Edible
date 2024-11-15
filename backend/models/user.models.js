@@ -2,32 +2,6 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const addressSchema = new mongoose.Schema({
-   type: {
-      type: String,
-      enum: ["Home", "Work", "Other"],
-      default: "Home"
-   },
-   description: {
-      type: String,
-      trim: true
-   },
-   coordinates: {
-      lat: {
-         type: Number,
-         min: -90,
-         max: 90,
-      },
-      lon: {
-         type: Number,
-         min: -180,
-         max: 180,
-      }
-   }
-})
-
-const Address = mongoose.model("Address", addressSchema);
-
 const userSchema = new mongoose.Schema(
    {
       username: {
@@ -66,6 +40,11 @@ const userSchema = new mongoose.Schema(
       cartDetails: {
          type: mongoose.Schema.Types.ObjectId,
          ref: "Cart"
+      },
+      roles: {
+         type: String,
+         enum: ['user', 'admin'],
+         default: 'user',
       },
       refreshToken: {
          type: String,

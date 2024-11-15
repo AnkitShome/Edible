@@ -35,4 +35,23 @@ const verifyJWT = async (req, res, next) => {
    }
 };
 
-export { verifyJWT };
+const isAdmin = async (req, res, next) => {
+   try {
+      if (req.user.roles !== "admin") {
+         return res.status(401)
+            .json({
+               success: false,
+               message: "Admin access only"
+            })
+      }
+   } catch (error) {
+      console.log(error)
+      res.status(500)
+         .json({
+            success: false,
+            message: "An error occured while verifying admin"
+         })
+   }
+}
+
+export { verifyJWT, isAdmin };
