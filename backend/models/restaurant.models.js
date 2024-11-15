@@ -21,7 +21,7 @@ const restaurantSchema = new mongoose.Schema({
    },
    image: {
       type: String,
-      required: true
+      // required: true
    },
    rating: {
       type: Number,
@@ -42,11 +42,11 @@ const restaurantSchema = new mongoose.Schema({
    openingHours: {
       open: {
          type: String,
-         required: true
+         // required: true
       },
       close: {
          type: String,
-         required: true
+         // required: true
       }
    },
    isFeatured: {

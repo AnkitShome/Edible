@@ -21,7 +21,7 @@ import adminRouter from './routes/admin.routes.js'
 
 app.use("/api/register", userRouter)
 app.use("/api/admin", adminRouter)
-app.use("/api/rest", restaurantRouter)
+app.use("/api/restaurant", restaurantRouter)
 
 
 app.get('/', (req, res) => {

@@ -18,7 +18,8 @@ const addRestaurant = async (req, res) => {
          location: { address },
       }
 
-      if (openingHours.open && openingHours.close) {
+
+      if (open && close) {
          createRestaurant.openingHours = { open, close }
       }
 
@@ -45,3 +46,5 @@ const addRestaurant = async (req, res) => {
    }
 
 }
+
+export { addRestaurant }
