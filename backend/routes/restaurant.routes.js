@@ -8,4 +8,6 @@ const router = Router()
 
 router.route("/add").post(verifyJWT, isAdmin, upload.single('image'), addRestaurant)
 
+// router.route("/add").post(verifyJWT, isAdmin, upload.none(), addRestaurant)
+
 export default router
