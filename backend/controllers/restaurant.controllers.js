@@ -111,7 +111,7 @@ const getAllRestaurants = async (req, res) => {
 
 const getRestaurant = async (req, res) => {
    try {
-      const resId = req.body._id
+      const { resId } = req.body
 
       const restaurant = await Restaurant.findById(resId)
          .populate({
@@ -146,9 +146,53 @@ const getRestaurant = async (req, res) => {
 
 
 const deleteRestaurant = async (req, res) => {
-   const resId = req.body._id
+   try {
+      const { resId } = req.body;
 
+      // Find the restaurant by ID
+      const restaurant = await Restaurant.findById(resId);
 
-}
+      if (!restaurant) {
+         return res.status(404).json({
+            success: false,
+            msg: "Restaurant not found",
+         });
+      }
+
+      // Delete related menu items and categories
+      const categories = restaurant.categories;
+
+      // Using Promise.all to handle multiple deletions concurrently
+      await Promise.all(
+         categories.map(async (categoryId) => {
+            const category = await Category.findById(categoryId);
+
+            if (category) {
+               const menuItems = category.items;
+
+               // Delete all menu items associated with the category
+               await MenuItem.deleteMany({ _id: { $in: menuItems } });
+            }
+
+            // Delete the category
+            await Category.findByIdAndDelete(categoryId);
+         })
+      );
+
+      // Delete the restaurant itself
+      await Restaurant.findByIdAndDelete(resId);
+
+      return res.status(200).json({
+         success: true,
+         msg: "Restaurant deleted successfully",
+      });
+   } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+         success: false,
+         msg: "An error occurred while removing the restaurant",
+      });
+   }
+};
 
 export { addRestaurant, getAllRestaurants, getRestaurant, deleteRestaurant }
