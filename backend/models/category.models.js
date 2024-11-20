@@ -11,10 +11,6 @@ const categorySchema = Schema({
          ref: "MenuItem"
       }
    ],
-   description: {
-      type: String,
-      required: true
-   }
 }, { timestamps: true })
 
 export const Category = mongoose.model("Category", categorySchema)

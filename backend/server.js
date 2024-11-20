@@ -18,11 +18,12 @@ connectDB()
 import userRouter from "./routes/user.routes.js"
 import restaurantRouter from './routes/restaurant.routes.js'
 import adminRouter from './routes/admin.routes.js'
+import categoryRouter from './routes/category.routes.js'
 
 app.use("/api/register", userRouter)
 app.use("/api/admin", adminRouter)
 app.use("/api/restaurant", restaurantRouter)
-
+app.use("/api/category", categoryRouter)
 
 app.get('/', (req, res) => {
    res.send("API Working")
