@@ -1,5 +1,6 @@
 import { Restaurant } from "../models/restaurant.models.js";
 import { MenuItem } from "../models/menuItem.models.js";
+import { Category } from "../models/category.models.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
 
 const addRestaurant = async (req, res) => {
@@ -78,4 +79,69 @@ const addRestaurant = async (req, res) => {
    }
 }
 
-export { addRestaurant }
+const getAllRestaurants = async (req, res) => {
+
+   try {
+      const restaurants = await Restaurant.find()
+         .select("name description image address")
+
+      if (restaurants.length === 0 || !restaurants) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "No restaurants found"
+            })
+      }
+
+      return res.status(200)
+         .json({
+            success: true,
+            data: restaurants
+         })
+
+   } catch (error) {
+      console.log(error)
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "Error while fetching restaurants"
+         })
+   }
+}
+
+const getRestaurant = async (req, res) => {
+   try {
+      const resId = req.body._id
+
+      const restaurant = await Restaurant.findById(resId)
+         .populate({
+            path: "categories",
+            polpulate: {
+               path: "items"
+            }
+         })
+
+      if (!restaurant) {
+         return res.status(400).json({
+            success: false,
+            msg: "Restaurant not found"
+         })
+      }
+
+      return res.status(200)
+         .json({
+            success: true,
+            msg: "Restaurant found",
+            restaurant
+         })
+   }
+   catch (error) {
+      console.log(error)
+      return res.status(200).json({
+         success: false,
+         msg: "An error occured while fetching restaurant"
+      })
+   }
+}
+
+export { addRestaurant, getAllRestaurants, getRestaurant }

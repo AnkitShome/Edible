@@ -37,7 +37,7 @@ const restaurantSchema = new mongoose.Schema({
          ref: "Reviews"
       }
    ],
-   category: [
+   categories: [
       {
          type: mongoose.Schema.Types.ObjectId,
          ref: "Category"
