@@ -1,11 +1,6 @@
 import mongoose, { Schema } from "mongoose"
 
 const categorySchema = Schema({
-   restaurant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Restaurant",
-      required: true
-   },
    name: {
       type: String,
       required: true

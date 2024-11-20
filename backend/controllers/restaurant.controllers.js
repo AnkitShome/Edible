@@ -144,4 +144,11 @@ const getRestaurant = async (req, res) => {
    }
 }
 
-export { addRestaurant, getAllRestaurants, getRestaurant }
+
+const deleteRestaurant = async (req, res) => {
+   const resId = req.body._id
+
+
+}
+
+export { addRestaurant, getAllRestaurants, getRestaurant, deleteRestaurant }
