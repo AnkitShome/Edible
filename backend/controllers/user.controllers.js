@@ -26,8 +26,10 @@ const generateRefreshAndAccessToken = async (userId) => {
 
 const sendOtp = async (req, res) => {
    try {
+      //take email
       const { email } = req.body
 
+      //check user present
       const existingUser = await User.findOne({ email })
 
       if (existingUser) {
@@ -37,8 +39,10 @@ const sendOtp = async (req, res) => {
          })
       }
 
+      //generate otp
       let otp = otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
 
+      //check otp already present or not
       while (await OTP.findOne({ otp })) {
          otp = otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
       }
@@ -72,12 +76,13 @@ const registerUser = async (req, res) => {
       const requiredFields = ["username", "email", "password", "firstName", "lastName", "phoneNumber", "otp"];
 
       if (!requiredFields.every(field => req.body[field])) {
-         return res.status(400).json({
+         return res.status(400).json({  
             success: false,
             message: "All fields are required"
          })
       }
 
+      //check if user is present 
       const user = await User.findOne({ $or: [{ email }, { username }] })
 
       if (user) {
@@ -85,8 +90,9 @@ const registerUser = async (req, res) => {
             success: false,
             message: "User is already registered"
          })
-      }
+      }      
 
+      //search for otp
       const latestOtp = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1)
 
       if (latestOtp.length === 0) {
@@ -96,6 +102,7 @@ const registerUser = async (req, res) => {
          })
       }
 
+      //otp provided is same in db
       if (otp !== latestOtp[0].otp) {
          return res.status(401).json({
             success: false,
@@ -103,6 +110,7 @@ const registerUser = async (req, res) => {
          })
       }
 
+      //create user
       const newUser = await User.create({
          firstName,
          lastName,

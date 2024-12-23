@@ -29,7 +29,9 @@ const restaurantSchema = new mongoose.Schema({
    },
    rating: {
       type: Number,
-      default: 0
+      default: 0,
+      min:0,
+      max:5
    },
    reviews: [
       {
@@ -44,8 +46,14 @@ const restaurantSchema = new mongoose.Schema({
       }
    ],
    timings: {
-      type: Map,
-      of: [timeSlotsSchema]
+      open:{
+         type:String,
+         required:true
+      },
+      close:{
+         type:String,
+         required:true
+      }
    },
    isOpen: {
       type: Boolean,
