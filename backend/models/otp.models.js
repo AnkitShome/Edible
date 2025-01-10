@@ -1,40 +1,25 @@
 import mongoose from "mongoose";
-import { mailSender } from "../utils/mailSender.utils.js";
-import { otpTemplate } from "../utils/emailTemplate.js";
 
-const OTPSchema = new mongoose.Schema({
-   email: {
-      type: String,
-      required: true,
+const otpSchema = new mongoose.Schema(
+   {
+      email: {
+         type: String,
+         required: true,
+      },
+      otp: {
+         type: String,
+         required: true,
+      },
+      createdAt: {
+         type: Date,
+         default: () => Date.now(), // Use high-resolution time
+         expires: 900, // Optional: TTL (time-to-live) index to auto-delete after 15 minutes
+      },
    },
-   otp: {
-      type: String,
-      required: true,
-   },
-   createdAt: {
-      type: Date,
-      default: Date.now(),
-   },
-});
-
-OTPSchema.methods.sendVerificationEmail = async function () {
-   try {
-      const response = await mailSender(
-         this.email,
-         "Verification Email from EDIBLE",
-         otpTemplate(this.otp)
-      )
-      console.log("Email sent successfully ", response);
-   } catch (error) {
-      console.log("error while sending email: ", error);
-      throw error;
+   {
+      timestamps: true, // Adds `createdAt` and `updatedAt` fields
    }
-}
+);
 
-OTPSchema.pre("save", async function (next) {
-   if (!this.isNew) next();
-   await this.sendVerificationEmail()
-   next();
-})
-
-export const OTP = mongoose.model("OTP", OTPSchema);
+const OTP = mongoose.model("OTP", otpSchema);
+export { OTP };

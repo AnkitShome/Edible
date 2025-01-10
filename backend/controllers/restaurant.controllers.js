@@ -5,11 +5,11 @@ import { uploadOnCloudinary } from "../config/cloudinary.js";
 
 const addRestaurant = async (req, res) => {
    try {
-      const { name, description, address, lat, lon, slots } = req.body
+      const { name, description, address, lat, lon, open, close } = req.body
 
       const image = req.file?.path;
 
-      if (!name || !description || !address || !lat || !lon || !image || !slots) {
+      if (!name || !description || !address || !lat || !lon || !image || !open || !close) {
 
          return res.status(400)
             .json({
@@ -31,35 +31,13 @@ const addRestaurant = async (req, res) => {
       const image_url = uploadImage.secure_url
 
 
-
-      const isValidSlot = slots.every((slot) => {
-         return slot.open && slot.close && typeof slot.open === "string" && typeof slot.close === "string"
-      });
-
-      if (!isValidSlot) {
-         return res.status(400)
-            .json({
-               success: false,
-               msg: "Invalid slots entered"
-            })
-      }
-
-      const timingsMap = new Map();
-
-      const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-
-      for (let i = 0; i < 7; i++) {
-         timingsMap.set(daysOfWeek[i], slots)
-      }
-
       const restaurant = await Restaurant.create({
          name,
          description,
          address,
          coordinates: { lat, lon },
          image: image_url,
-         timings: timingsMap
+         timings: { open, close }
       })
 
       return res.status(200)

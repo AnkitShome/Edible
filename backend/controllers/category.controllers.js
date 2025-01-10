@@ -11,13 +11,15 @@ const addCategory = async (req, res) => {
          name,
       })
 
-
+      //push the category to restaurant
       const updatedRestaurant = await Restaurant.findOneAndUpdate(
          { _id: restaurantId },
          { $push: { categories: createCategory._id } },
          { new: true }
       )
 
+      //if restaurant is not already present
+      //delete category
       if (!updatedRestaurant) {
 
          await Category.findByIdAndDelete(createCategory._id)
@@ -78,6 +80,7 @@ const deleteCategory = async (req, res) => {
             })
       }
 
+      //check category in restaurant and provided category are same
       const categoryExists = restaurant.categories.some(
          (catId) => catId.toString() === category._id.toString()
       );
@@ -89,6 +92,7 @@ const deleteCategory = async (req, res) => {
          })
       }
 
+      //menu items present in a category
       const menuItems = category.items
 
       const menuItem = await MenuItem.deleteMany({ _id: { $in: menuItems } })
@@ -98,7 +102,7 @@ const deleteCategory = async (req, res) => {
       })
 
       await Category.findByIdAndDelete(category._id)
-  
+
       return res.status(200).json({
          success: true,
          msg: "Category deleted successfully",
@@ -115,4 +119,4 @@ const deleteCategory = async (req, res) => {
 
 }
 
-export { addCategory }
+export { addCategory, deleteCategory }

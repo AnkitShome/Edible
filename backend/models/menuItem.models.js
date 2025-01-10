@@ -9,6 +9,9 @@ const menuItemSchema = new mongoose.Schema({
       type: String,
       required: true
    },
+   image: {
+      type: String
+   },
    price: {
       type: Number,
       required: true
@@ -16,10 +19,6 @@ const menuItemSchema = new mongoose.Schema({
    ratings: {
       type: Number,
       default: 0
-   },
-   isOpen: {
-      type: Boolean,
-      default: false
    }
 }, { timestamps: true })
 

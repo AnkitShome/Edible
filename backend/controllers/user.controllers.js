@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt"
 import otpGenerator from "otp-generator"
+import { otpTemplate } from "../utils/emailTemplate.js";
 import { User } from "../models/user.models.js";
 import { OTP } from "../models/OTP.models.js";
 import jwt from "jsonwebtoken"
+import { mailSender } from "../utils/mailSender.utils.js";
 
 const generateRefreshAndAccessToken = async (userId) => {
    try {
@@ -52,13 +54,29 @@ const sendOtp = async (req, res) => {
          email
       })
 
+      try {
+         await mailSender(email, "Verification Email from EDIBLE", otpTemplate(otp));
+         console.log("Email sent successfully");
+      }
+
+      catch (emailError) {
+         console.error("Error while sending email:", emailError);
+         // Rollback OTP creation if email fails
+         await OTP.deleteOne({ _id: code._id });
+         return res.status(500).json({
+            success: false,
+            msg: "Failed to send OTP email. Please try again.",
+         });
+      }
+
       return res.status(201).json({
          success: true,
          code,    //otp data for debugging
          msg: "OTP sent"
       })
 
-   } catch (error) {
+   }
+   catch (error) {
       return res.status(500).json({
          success: false,
          msg: "Error sending OTP, try again"
@@ -76,7 +94,7 @@ const registerUser = async (req, res) => {
       const requiredFields = ["username", "email", "password", "firstName", "lastName", "phoneNumber", "otp"];
 
       if (!requiredFields.every(field => req.body[field])) {
-         return res.status(400).json({  
+         return res.status(400).json({
             success: false,
             message: "All fields are required"
          })
@@ -90,7 +108,7 @@ const registerUser = async (req, res) => {
             success: false,
             message: "User is already registered"
          })
-      }      
+      }
 
       //search for otp
       const latestOtp = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1)
@@ -121,6 +139,8 @@ const registerUser = async (req, res) => {
       })
 
       const newuser = await User.findById(newUser._id).select("-password -refreshToken")
+
+      await OTP.deleteMany({ email });
 
       return res.status(201).json({
          success: true,
@@ -163,8 +183,7 @@ const loginUser = async (req, res) => {
 
       if (!(await bcrypt.compare(password, user.password))) {
          console.log(password)
-         const has =
-            console.log(user.password)
+         console.log(user.password)
          return res.status(400).json({
             success: false,
             message: "Invalid password entered"

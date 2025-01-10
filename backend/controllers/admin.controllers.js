@@ -47,7 +47,9 @@ const registerAdmin = async (req, res) => {
             msg: "Incorrect OTP entered"
          });
       }
-
+      //
+      console.log(password)
+      //
 
       const newUser = await User.create({
          firstName,
