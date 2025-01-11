@@ -7,6 +7,14 @@ const addCategory = async (req, res) => {
    try {
       const { restaurantId, name } = req.body
 
+      if (!restaurantId || !name) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Enter all fields"
+            })
+      }
+
       const createCategory = await Category.create({
          name,
       })
@@ -51,16 +59,16 @@ const addCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
 
    try {
-      const { restaurantId, name } = req.body
+      const { restaurantId, categoryId } = req.body
 
-      if (!restaurantId || !name) {
+      if (!restaurantId || !categoryId) {
          return res.status(400)
             .json({
                success: false,
-               msg: "Enter restaurant Id and name"
+               msg: "Enter all fields"
             })
       }
-      const category = await Category.findOne({ name })
+      const category = await Category.findById(categoryId)
 
       if (!category) {
          return res.status(400)
@@ -119,4 +127,72 @@ const deleteCategory = async (req, res) => {
 
 }
 
-export { addCategory, deleteCategory }
+const editCategory = async (req, res) => {
+   try {
+      const { restaurantId, categoryId, name } = req.body
+
+      if (!restaurantId || !categoryId || !name) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "All fields are required"
+            })
+      }
+
+      const updates = {}
+      if (name) updates.name = name
+
+      const restaurant = await Restaurant.findById(restaurantId)
+
+      if (!restaurant) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Restaurant not found"
+            })
+      }
+
+      const categoryExists = restaurant.categories.some(
+         (cat) => cat.toString() === categoryId
+      )
+
+      if (!categoryExists) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Category does not exist in restaurant"
+            })
+      }
+
+      const category = await Category.findByIdAndUpdate(
+         { _id: categoryId },
+         { $set: updates },
+         { new: true }
+      )
+
+      if (!category) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Category does not exist"
+            })
+      }
+
+      return res.status(200)
+         .json({
+            success: true,
+            category,
+            msg: "Category successfully updated"
+         })
+
+   } catch (error) {
+      console.log(error)
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "An error occured while updating category ,please try again"
+         })
+   }
+}
+
+export { addCategory, deleteCategory, editCategory }

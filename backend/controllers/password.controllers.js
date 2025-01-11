@@ -2,7 +2,7 @@ import crypto from "crypto";
 import otpGenerator from "otp-generator";
 import bcrypt from "bcrypt";
 import { User } from "../models/user.models.js";
-import { OTP } from "../models/OTP.models.js";
+import { OTP } from "../models/otp.models.js";
 import { mailSender } from "../utils/mailSender.utils.js";
 import { otpTemplate } from "../utils/emailTemplate.js";
 

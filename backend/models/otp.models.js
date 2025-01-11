@@ -21,5 +21,7 @@ const otpSchema = new mongoose.Schema(
    }
 );
 
-const OTP = mongoose.model("OTP", otpSchema);
+// Check if the model already exists to avoid overwriting
+const OTP = mongoose.models.OTP || mongoose.model("OTP", otpSchema);
+
 export { OTP };
