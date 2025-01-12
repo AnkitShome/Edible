@@ -5,7 +5,6 @@ import { addItem, editItem, removeItem } from "../controllers/menuItem.controlle
 
 const router = Router()
 router.route("/add").post(verifyJWT, isAdmin, upload.single('image'), addItem)
-// router.route("/add").post(verifyJWT, isAdmin, upload.single('image'), addItem)
 router.route("/remove").post(verifyJWT, isAdmin, removeItem)
 router.route("/edit").post(verifyJWT, isAdmin, upload.single('image'), editItem)
 

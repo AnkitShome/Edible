@@ -51,7 +51,7 @@ const addItem = async (req, res) => {
          description,
          price,
          image: image_url,
-         // category: categoryId
+         restaurant: restaurantId
       });
 
       // Link the item to the category

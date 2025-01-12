@@ -22,6 +22,7 @@ const convertTo24Hour = (time) => {
 
 const addRestaurant = async (req, res) => {
    try {
+
       const { name, description, address, lat, lon, open, close } = req.body
 
       const image = req.file?.path;
@@ -194,6 +195,7 @@ const deleteRestaurant = async (req, res) => {
 
       return res.status(200).json({
          success: true,
+         restaurant,
          msg: "Restaurant deleted successfully",
       });
    } catch (error) {
