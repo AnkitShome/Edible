@@ -316,5 +316,45 @@ const editAmount = async (req, res) => {
    }
 };
 
+const viewCart = async (req, res) => {
+   try {
 
-export { addToCart, editAmount, deleteCart }
+      const { cartId } = req.body
+
+      if (!cartId) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Enter required field"
+            })
+      }
+
+      const cart = await Cart.findById(cartId)
+
+      if (!cart) {
+         return res.status(400)
+            .json({
+               success: false,
+               msg: "Cart not found"
+            })
+      }
+
+      return res.status(200)
+         .json({
+            success: true,
+            cart,
+            msg: "Cart data"
+         })
+   } catch (error) {
+      console.log(error)
+
+      return res.status(500)
+         .json({
+            success: false,
+            msg: "An error occured while fetching cart. Please try again later"
+         })
+   }
+
+}
+
+export { addToCart, editAmount, deleteCart, viewCart }
